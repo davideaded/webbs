@@ -1,13 +1,22 @@
 const pool = require("./pool");
 
-async function getUser(username) {
-    const query = {
-        text: `SELECT
-        *
-        FROM users
-        WHERE username = $1;`,
-        values: [username]
-    };
+async function getUser(usernameOrNull, idOrNull) {
+    let query;
+
+    if (idOrNull != null) {
+        query = {
+            text: `SELECT * FROM users WHERE id = $1;`,
+            values: [idOrNull],
+        };
+    } else if (usernameOrNull != null) {
+        query = {
+            text: `SELECT * FROM users WHERE username = $1;`,
+            values: [usernameOrNull],
+        };
+    } else {
+        throw new Error("Either username or id must be provided");
+    }
+
     const { rows } = await pool.query(query);
     return rows;
 }
