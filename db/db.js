@@ -39,9 +39,19 @@ async function createUser(user) {
     return rows[0];
 }
 
+async function getMessageById(id) {
+    if (!id) throw new Error("Id must be provided");
+    const query = {
+        text: `SELECT * FROM publications WHERE id = $1;`,
+        values: [id],
+    };
+    const { rows } = await pool.query(query);
+    return rows;
+}
+
 async function getAllMessages() {
     const query = {
-        text: `SELECT * FROM messages;`,
+        text: `SELECT * FROM publications;`,
         values: [],
     };
     const { rows } = await pool.query(query);
@@ -66,9 +76,44 @@ async function createMessage(message) {
     const { rows } = await pool.query(query);
     return rows[0];
 }
+
+async function updateMessage(id, title, content) {
+    if (!id) throw new Error("Id must be provided");
+    if (!title || !content) throw new Error("Title and content are required");
+
+    const query = {
+        text: `UPDATE publications
+        SET title = $1, content = $2
+        WHERE id = $3
+        RETURNING *;`,
+        values: [title, content, id],
+    };
+
+    const { rows } = await pool.query(query);
+    return rows[0];
+}
+
+async function deleteMessage(id) {
+    if (!id) throw new Error("Id must be provided");
+
+    const query = {
+        text: `UPDATE publications
+        SET title = $1, content = $2
+        WHERE id = $3
+        RETURNING *;`,
+        values: [title, content, id],
+    };
+
+    const { rows } = await pool.query(query);
+    return rows[0];
+}
+
 module.exports = {
     getUser,
     createUser,
     getAllMessages,
-    createMessage
+    createMessage,
+    getMessageById,
+    updateMessage,
+    deleteMessage
 };

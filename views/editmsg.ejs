@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Edit Message</title>
+        <link rel="stylesheet" href="/formstyle.css">
+    </head>
+    <body>
+        <form method="POST" action="/messages/<%= message.id %>/edit">
+            <h2>Edit message</h2>
+
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="<%= message.title %>" required>
+
+            <label for="content">Content</label>
+            <textarea name="content" id="content" required><%= message.content %></textarea>
+
+            <% if (errorMessages && errorMessages.length > 0) { %>
+                <p style="color: red;"><%= errorMessages[0] %></p>
+            <% } %>
+
+            <button type="submit">Update</button>
+        </form>
+
+        <a href="/">Cancel</a>
+    </body>
+</html>
