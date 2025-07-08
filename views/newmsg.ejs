@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New message</title>
+        <link rel="stylesheet" href="/formstyle.css">
+    </head>
+    <body>
+        <form method="POST" action="/messages/new-message">
+            <h2>Create new message</h2>
+
+            <label for="firstname">Title</label>
+            <input type="text" name="title" id="title" required>
+            <label for="lastname">Content</label>
+            <textarea name="content" id="content" placeholder="Write here..." required></textarea>
+            <% if (errorMessages && errorMessages.length > 0) { %>
+                <p style="color: red;"><%= errorMessages[0] %></p>
+            <% } %>
+            <button type="submit">Create</button>
+        </form>
+        <a href="/">Go back</a>
+    </body>
+</html>

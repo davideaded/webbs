@@ -14,7 +14,7 @@ async function createUser(req, res, next) {
             return res.status(400).send("This username is already registered");
         }
         const hashedPassword = bcrypt.hashSync(password, 10);
-        await db.create({
+        await db.createUser({
             name: firstname,
             lastname,
             username,
@@ -55,8 +55,17 @@ async function deserialize(id, done) {
     }
 }
 
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
+    }
+    req.flash("error", "You must log-in to create a message");
+    res.redirect("/");
+}
+
 module.exports = {
     createUser,
     authUser,
     deserialize,
+    isAuthenticated,
 };

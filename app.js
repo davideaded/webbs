@@ -4,9 +4,11 @@ const session = require("express-session");
 const passport = require("passport");
 const path = require("path");
 const flash = require("connect-flash");
+const { isAuthenticated } = require("./controllers/userController");
 
 const app = express();
 const authRoutes = require("./routes/auth");
+const messageRoutes = require("./routes/messages");
 require("./config/passport")(passport);
 
 const serverAddress = process.env.ADDRESS || "127.0.0.1";
@@ -30,6 +32,7 @@ app.set("view engine", "ejs");
 
 // Routes
 app.use("/", authRoutes);
+app.use("/messages", isAuthenticated, messageRoutes);
 
 app.use((err, _req, res, _next) => {
     console.error(err);
