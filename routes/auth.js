@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const { createUser } = require("../controllers/userController");
+const { getAllMessages } = require("../db/db");
 
 const router = express.Router();
 router.get("/sign-up", (_req, res) => res.render("signup"));
@@ -16,12 +17,10 @@ router.post("/login", passport.authenticate("local", {
     failureFlash: true,
 }));
 
-router.get("/", (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render("main", { user: req.user });
-    } else {
-        res.redirect("/login");
-    }
+router.get("/", async (req, res) => {
+    const messages = await getAllMessages();
+    const user = req.user || null;
+    res.render("main", { user, messages });
 });
 
 router.get("/log-out", (req, res, next) => {

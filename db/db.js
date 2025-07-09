@@ -51,7 +51,13 @@ async function getMessageById(id) {
 
 async function getAllMessages() {
     const query = {
-        text: `SELECT * FROM publications;`,
+        text: `
+        SELECT 
+        publications.*,
+        users.username AS user
+        FROM publications
+        JOIN users ON publications.user_id = users.id;
+        `,
         values: [],
     };
     const { rows } = await pool.query(query);

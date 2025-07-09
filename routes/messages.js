@@ -2,8 +2,8 @@ const express = require("express");
 const { createMessage, getMessageById, updateMessage } = require("../controllers/messagesController");
 
 const router = express.Router();
-router.get("/new-message", (_req, res) => res.render("newmsg"));
-router.post("/new-message", createMessage);
+router.get("/new", (_req, res) => res.render("newmsg"));
+router.post("/new", createMessage);
 router.get("/:id/edit", async (req, res, next) => {
     try {
         const [message] = await getMessageById(req.params.id);

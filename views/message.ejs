@@ -1,8 +1,8 @@
 <div class="message">
-    <div class="userdate">
-        <p> <%= publication.user %></p>
-        <p> <%= publication.created_at %></p>
+    <h2> <%= m.title %></h2>
+    <p> <%= m.content %></p>
+    <div class="userdata">
+        <p> <%= user ? m.user : "Anonymous"%></p>
+        <p> <%= m.created_at %></p>
     </div>
-    <h2> <%= publication.title %></h2>
-    <p> <%= publication.content %></p>
 </div>
