@@ -13,10 +13,9 @@ async function createMessage(req, res, next) {
         const { title, content } = req.body;
         const userId = req.user?.id;
         const createdAt = new Date();
-        console.log(title, content, userId, createdAt);
         if (!title || !content || !createdAt || !userId) {
             req.flash("error", "All fields required");
-            return res.redirect("/messages/new-message");
+            return res.redirect("/messages/new");
         }
         await db.createMessage({title, content, createdAt, userId});
         res.redirect("/");
@@ -25,17 +24,44 @@ async function createMessage(req, res, next) {
     }
 }
 
-async function updateMessage(req, res, next) {
+async function renderEditForm(req, res, next) {
     try {
-        const { title, content } = req.body;
         const { id } = req.params;
-        console.log(title, content, id);
-        if (!title || !content) {
-            req.flash("error", "All fields required");
-            return res.redirect(`/messages/${id}/edit`);
+        const [msg] = await getMessageById(id);
+        if (!msg) {
+            return res.status(404).send("Message not found");
         }
+        if (msg.user_id !== req.user?.id) {
+            return res.status(403).send("Not authorized");
+        }
+        res.render("editmsg", { message: msg });
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function handleEditMessage(req, res, next) {
+    try {
+        const { id } = req.params;
+        const { title, content } = req.body;
+        const [msg] = await getMessageById(id);
+        if (!msg) return res.status(404).send("Message not found");
+        if (msg.user_id !== req.user?.id) return res.status(403).send("Not authorized");
         await db.updateMessage(id, title, content);
         res.redirect("/");
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function handleDeleteMessage(req, res, next) {
+    try {
+        const { id } = req.params;
+        const [msg] = await getMessageById(id);
+        if (!msg) return res.status(404).send("Message not found");
+        if (msg.user_id !== req.user?.id) return res.status(403).send("Not authorized");
+        await db.deleteMessage(id);
+        res.status(204).end();
     } catch (err) {
         next(err);
     }
@@ -44,5 +70,7 @@ async function updateMessage(req, res, next) {
 module.exports = {
     createMessage,
     getMessageById,
-    updateMessage,
+    handleEditMessage,
+    handleDeleteMessage,
+    renderEditForm
 }

@@ -103,11 +103,8 @@ async function deleteMessage(id) {
     if (!id) throw new Error("Id must be provided");
 
     const query = {
-        text: `UPDATE publications
-        SET title = $1, content = $2
-        WHERE id = $3
-        RETURNING *;`,
-        values: [title, content, id],
+        text: `DELETE FROM publications WHERE id = $1 RETURNING *;`,
+        values: [id],
     };
 
     const { rows } = await pool.query(query);

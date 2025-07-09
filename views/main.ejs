@@ -7,16 +7,44 @@
         <link rel="stylesheet" href="/main.css">
     </head>
     <body>
-        <%- include("navbar", { user }) %>
+        <%- include("navbar", {  }) %>
         <% if (user) { %>
-            <h1>Welcome, <%= user.username %></h1>
+        <div class="greetings">
+            <h1 class="welcome">Welcome, <%= user.username %>!</h1>
+            <a class="btn new" href="/messages/new"> New message </a>
+        </div>
         <% } %>
 
         <div class="container">
-            <% messages.forEach(m => { %>
-            <%- include("message", { m, user }) %>
-            <% }) %>
-
+            <% if (messages) { %>
+                <% messages.forEach(m => { %>
+                <%- include("message", { m, user }) %>
+                <% }) %>
+            <% } %>
         </div>
     </body>
+    <script defer>
+        document.addEventListener("DOMContentLoaded", () => {
+        const delBtns = document.querySelectorAll(".delete-btn");
+        delBtns.forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const id = btn.dataset.id;
+                const confirmDelete = confirm("Confirm delete?");
+                if (confirmDelete) {
+                    try {
+                        const res = await fetch(`/messages/${id}`, {
+                            method: "DELETE",
+                        });
+                        if (res.ok) {
+                            btn.closest(".message").remove();
+                        }
+
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            });
+        });
+    });
+    </script>
 </html>

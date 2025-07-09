@@ -5,4 +5,10 @@
         <p> <%= user ? m.user : "Anonymous"%></p>
         <p> <%= m.created_at %></p>
     </div>
+    <% if (user && user.id === m.user_id || user && user.role === "admin") { %>
+    <div class="opts">
+        <a class="edit-btn btn" href="/messages/<%=m.id%>/edit"> 🛠️ </a>
+        <button id="delete-btn" data-id="<%=m.id%>" class="delete-btn btn"> 🗑️ </button>
+    </div>
+    <% } %>
 </div>
