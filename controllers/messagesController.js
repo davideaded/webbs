@@ -10,14 +10,25 @@ async function getMessageById(id) {
 
 async function createMessage(req, res, next) {
     try {
-        const { title, content } = req.body;
+        const { title, content, parent_id } = req.body;
         const userId = req.user?.id;
         const createdAt = new Date();
-        if (!title || !content || !createdAt || !userId) {
-            req.flash("error", "All fields required");
+        const isReply = !!parent_id;
+        if (!content || !userId) {
+            req.flash("error", "Missing content");
+            return res.redirect("/");
+        }
+        if (!isReply && !title) {
+            req.flash("error", "Title required");
             return res.redirect("/messages/new");
         }
-        await db.createMessage({title, content, createdAt, userId});
+        await db.createMessage({
+            title: isReply ? "response" : title,
+            content,
+            createdAt,
+            userId,
+            parentId: parent_id || null
+        });
         res.redirect("/");
     } catch (err) {
         next(err);

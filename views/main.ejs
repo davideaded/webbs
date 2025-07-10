@@ -9,23 +9,37 @@
     <body>
         <%- include("navbar", {  }) %>
         <% if (user) { %>
-        <div class="greetings">
-            <h1 class="welcome">Welcome, <%= user.username %>!</h1>
-            <a class="btn new" href="/messages/new"> New message </a>
-        </div>
+            <div class="greetings">
+                <h1 class="welcome">Welcome, <%= user.username %>!</h1>
+                <a class="btn new" href="/messages/new"> New message </a>
+            </div>
         <% } %>
 
         <div class="container">
             <% if (messages) { %>
                 <% messages.forEach(m => { %>
-                <%- include("message", { m, user }) %>
+                    <% if (!m.parent_id) { %>
+                        <%- include("message", { m, user, replies }) %>
+                    <% } %>
                 <% }) %>
             <% } %>
         </div>
     </body>
     <script defer>
-        document.addEventListener("DOMContentLoaded", () => {
+        function elt(type, props, ...children) {
+        const dom = document.createElement(type);
+        if (props) Object.assign(dom, props);
+        for (let child of children) {
+            if (typeof child !== "string") dom.appendChild(child);
+            else dom.appendChild(document.createTextNode(child));
+        }
+        return dom;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
         const delBtns = document.querySelectorAll(".delete-btn");
+        const replyBtns = document.querySelectorAll(".reply-btn");
+
         delBtns.forEach((btn) => {
             btn.addEventListener("click", async () => {
                 const id = btn.dataset.id;
@@ -38,11 +52,42 @@
                         if (res.ok) {
                             btn.closest(".message").remove();
                         }
-
                     } catch (err) {
                         console.error(err);
                     }
                 }
+            });
+        });
+
+        replyBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if (btn.closest(".message").querySelector(".reply-form")) return;
+
+                const parentId = btn.dataset.id;
+                const form = elt(
+                    "form",
+                    {
+                        action: "/messages/new",
+                        method: "POST",
+                        className: "reply-form",
+                    },
+                    elt("textarea", {
+                        name: "content",
+                        required: true,
+                        placeholder: "Write your reply...",
+                    }),
+                    elt("input", {
+                        type: "hidden",
+                        name: "parent_id",
+                        value: parentId,
+                    }),
+                    elt("input", {
+                        type: "submit",
+                        value: "Reply",
+                    })
+                );
+
+                btn.closest(".message").appendChild(form);
             });
         });
     });

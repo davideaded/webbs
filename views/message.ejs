@@ -5,10 +5,22 @@
         <p> <%= user ? m.user : "Anonymous"%></p>
         <p> <%= m.created_at %></p>
     </div>
-    <% if (user && user.id === m.user_id || user && user.role === "admin") { %>
-    <div class="opts">
-        <a class="edit-btn btn" href="/messages/<%=m.id%>/edit"> 🛠️ </a>
-        <button id="delete-btn" data-id="<%=m.id%>" class="delete-btn btn"> 🗑️ </button>
-    </div>
+    <% if (replies && replies.has(m.id)) { %>
+        <% replies.get(m.id).forEach(reply => { %>
+            <div class="reply">
+                <p>
+                    <span class="r-name"><%= user ? reply.user : "Anonymous" %>:</span>
+                    <%= reply.content %>
+                </p>
+                <p class="userdata"><%= reply.created_at %></p>
+            </div>
+        <% }) %>
     <% } %>
+        <div class="opts">
+            <% if (user && user.id === m.user_id || user && user.role === "admin") { %>
+                <a class="edit-btn btn" href="/messages/<%=m.id%>/edit"> 🛠️ </a>
+                <button id="delete-btn" data-id="<%=m.id%>" class="delete-btn btn"> 🗑️ </button>
+            <% } %>
+            <button id="reply-btn" data-id="<%=m.id%>" class="reply-btn btn"> Reply </button>
+        </div>
 </div>

@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS publications (
     content TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    parent_id INTEGER, -- nova coluna
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES publications(id) ON DELETE CASCADE
 );
 `;
-
 async function main() {
     console.log("seeding...");
     const client = new Client({

@@ -67,8 +67,8 @@ async function getAllMessages() {
 async function createMessage(message) {
     const query = {
         text: `
-        INSERT INTO publications (title, content, created_at, user_id)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO publications (title, content, created_at, user_id, parent_id)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *;
         `,
         values: [
@@ -76,6 +76,7 @@ async function createMessage(message) {
             message.content,
             message.createdAt,
             message.userId,
+            message.parentId ?? null
         ],
     };
 
