@@ -43,13 +43,16 @@
         delBtns.forEach((btn) => {
             btn.addEventListener("click", async () => {
                 const id = btn.dataset.id;
+                const isReply = btn.hasAttribute("data-reply");
                 const confirmDelete = confirm("Confirm delete?");
                 if (confirmDelete) {
                     try {
                         const res = await fetch(`/messages/${id}`, {
                             method: "DELETE",
                         });
-                        if (res.ok) {
+                        if (res.ok && isReply) {
+                            btn.closest(".reply").remove();
+                        } else {
                             btn.closest(".message").remove();
                         }
                     } catch (err) {

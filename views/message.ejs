@@ -13,6 +13,10 @@
                     <%= reply.content %>
                 </p>
                 <p class="userdata"><%= reply.created_at %></p>
+                <% if (user && reply.user_id === user.id || user && user.role === "admin") { %>
+                    <a class="edit-btn btn" href="/messages/<%=reply.id%>/edit"> 🛠️ </a>
+                    <button id="delete-reply" data-reply data-id="<%=reply.id%>" class="delete-btn btn"> 🗑️ </button>
+                <% } %>
             </div>
         <% }) %>
     <% } %>
@@ -21,6 +25,8 @@
                 <a class="edit-btn btn" href="/messages/<%=m.id%>/edit"> 🛠️ </a>
                 <button id="delete-btn" data-id="<%=m.id%>" class="delete-btn btn"> 🗑️ </button>
             <% } %>
-            <button id="reply-btn" data-id="<%=m.id%>" class="reply-btn btn"> Reply </button>
+            <% if (user) { %>
+                <button id="reply-btn" data-id="<%=m.id%>" class="reply-btn btn"> Reply </button>
+            <% } %>
         </div>
 </div>
