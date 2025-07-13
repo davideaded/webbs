@@ -11,7 +11,7 @@ const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 require("./config/passport")(passport);
 
-const serverAddress = process.env.ADDRESS || "127.0.0.1";
+const serverAddress = "0.0.0.0";
 const port = process.env.PORT || 3000;
 
 // Middlewares

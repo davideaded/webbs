@@ -31,8 +31,8 @@ async function createUser(user) {
             user.lastname,
             user.username,
             user.password,
-            user.role,
-        ],
+            user.role
+        ]
     };
 
     const { rows } = await pool.query(query);
