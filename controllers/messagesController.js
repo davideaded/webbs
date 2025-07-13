@@ -70,7 +70,7 @@ async function handleDeleteMessage(req, res, next) {
         const { id } = req.params;
         const [msg] = await getMessageById(id);
         if (!msg) return res.status(404).send("Message not found");
-        if (msg.user_id !== req.user?.id) return res.status(403).send("Not authorized");
+        if (msg.user_id !== req.user?.id && req.user?.role !== "admin") return res.status(403).send("Not authorized");
         await db.deleteMessage(id);
         res.status(204).end();
     } catch (err) {
